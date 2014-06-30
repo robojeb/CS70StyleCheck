@@ -1,0 +1,133 @@
+#!/usr/bin/python
+
+import sys
+import clang.cindex
+import string
+import re
+
+errors=0
+
+#This regex matches variable names in camel case
+localVarRegex = "([a-z][a-z0-9]*)([A-Z][a-z0-9]*)*$"
+localVar = re.compile(localVarRegex)
+
+#This regex matches variable names in camel case with and underscore
+memberVarRegex = "([a-z][a-z0-9]*)([A-Z][a-z0-9]*)*_$"
+memberVar = re.compile(memberVarRegex)
+
+#This regex matches variable names in all caps with underscores between words
+constantRegex = "([A-Z][A-Z0-9]*)(_[A-Z0-9]+)*$"
+constant = re.compile(constantRegex)
+
+#This regex matches variable names in upper camel case
+classNameRegex = "([A-Z][a-z]*)+$"
+className = re.compile(classNameRegex)
+
+#We have found a class node and are now looking at member variables
+#static constants and other sub classes
+def inClass(node):
+  #This prevents us from checking included files (like the standard libraries)
+  if node.location.file != None and str(node.location.file) != currentFile:
+    return
+
+  global errors
+
+  #A variable declaration is clang-speak for a static variable
+  if node.kind == clang.cindex.CursorKind.VAR_DECL:
+    if constant.match(node.spelling) is None:
+      errors += 1
+      print "[%s,%s] Invalid static variable name: %s" % \
+                      (node.location.line, node.location.column, node.spelling)
+
+  #A field declaration is for a member variable
+  if node.kind == clang.cindex.CursorKind.FIELD_DECL:
+    if memberVar.match(node.spelling) is None:
+      errors += 1
+      print "[%s,%s] Invalid member variable: %s" % \
+                      (node.location.line, node.location.column, node.spelling)
+
+  #If we have found a sub class we have to check that its name is also valid
+  if node.kind == clang.cindex.CursorKind.CLASS_DECL:
+    if className.match(node.spelling) is None:
+      errors += 1
+      print "[%s,%s] Invalid class name: %s" %\
+            (node.location.line, node.location.column, node.spelling)
+
+  #Recursively check all nodes inside the class (or subclass)
+  for c in node.get_children():
+    inClass(c)
+
+#If we are in a function then we just have to look for local variales
+def inFunction(node):
+  #This prevents us from checking included files (like the standard libraries)
+  if node.location.file != None and str(node.location.file) != currentFile:
+    return
+
+  global errors
+
+  #A variable declaration is for local variables
+  if node.kind == clang.cindex.CursorKind.VAR_DECL:
+    if localVar.match(node.spelling) is None:
+      errors += 1
+      print "[%s,%s] Invalid local variable name: %s" % \
+                      (node.location.line, node.location.column, node.spelling)
+
+#This handles nodes at the top level (not in a class or in a function)
+def generalNode(node):
+  #This prevents us from checking included files (like the standard libraries)
+  if node.location.file != None and str(node.location.file) != currentFile:
+    return
+
+  global errors
+
+  #If we find a class declaration check its name and recurse on all of its
+  #sub nodes
+  if node.kind == clang.cindex.CursorKind.CLASS_DECL:
+    if className.match(node.spelling) is None:
+      errors += 1
+      print "[%s,%s] Invalid class name: %s" %\
+            (node.location.line, node.location.column, node.spelling)
+    for c in node.get_children():
+      inClass(c)
+
+  #If we find a function (c-style) or a method (c++-style) declaration we want
+  #to recures on its member variables
+  elif node.kind == clang.cindex.CursorKind.FUNCTION_DECL or\
+      node.kind == clang.cindex.CursorKind.CXX_METHOD:
+    for c in node.get_children():
+      inFunction(c)
+  #If we find a variable declaration not in a function or class it must be
+  #global and thus bad.
+  elif node.kind == clang.cindex.CursorKind.VAR_DECL:
+    errors += 1
+    print "[%s,%s] Global variable %s" %\
+            (node.location.line, node.location.column, node.spelling)
+  #Recurse on all the rest of the nodes
+  else:
+    for c in node.get_children():
+      generalNode(c)
+
+
+if __name__ == '__main__':
+  clang.cindex.Config.set_library_file('/usr/lib/llvm-3.3/lib/libclang.so')
+
+  #iterate over every file on the command line
+  for f in sys.argv[1:]:
+    #Create the clang index object and parse the file
+    index = clang.cindex.Index.create()
+    tu = index.parse(f)
+    #Begin output
+    print "="*80
+    print "Checking file: " + tu.spelling
+
+    #Check the names of variables in this file
+    global currentFile
+    currentFile = tu.spelling
+    errors = 0
+    generalNode(tu.cursor)
+
+    #Print an error report
+    if errors == 0:
+      print "All names pass check"
+    else:
+      print "\nFound " + str(errors) + " errors"

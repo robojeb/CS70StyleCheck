@@ -1,0 +1,57 @@
+#!/usr/bin/python
+import sys, re, os.path
+
+#This regex finds the #ifndef VAR part of the file
+incGuardRegex = ur"#ifndef ([A-Z_]+)\n+#define ([A-Z_]+)( [0-9]+)*\n"
+incGuard = re.compile(incGuardRegex)
+
+#This regex finds the #endif
+endifRegex = ur"#endif"
+endif = re.compile(endifRegex)
+
+ERROR = "\033[91m[Error]\033[0m"
+WARNING = "\033[93m[Style Warning]\033[0m"
+
+if __name__ == "__main__":
+  #Perform guard check on all files from the command line
+  for fn in sys.argv[1:]:
+    with open(fn, 'r') as file:
+      #Read the contents of the file
+      content = file.read()
+
+    print "="*80
+    #Get the basename of the file
+    basename = os.path.basename(fn)
+    print "Checking: " + basename
+    #Get the name without the extension
+    rawName = os.path.splitext(basename)[0]
+
+    #Try to find the include guard
+    guard = incGuard.search(content)
+
+    if guard == None:
+      print ERROR
+      print "No include guard found. Include guards should be of the form:\n"
+      print "#ifndef FILENAME_INC\n#define FILENAME_INC\n\n...code...\n\n#endif\n"
+      continue
+    else:
+      incVar = guard.group(1)
+
+      #Check that the include guard will actually work because the if and
+      #the define match
+      if not guard.group(1) == guard.group(2):
+        print ERROR
+        print "Include guard will not function because variables don't match"
+        print "ifndef: %s" % (guard.group(1))
+        print "define: %s" % (guard.group(2))
+        continue
+
+      #check if the filename appears in the include variable
+      nameMatch = re.search(rawName, incVar, re.I)
+      if nameMatch == None:
+        print WARNING
+        print "Your include guard should include the name of the file it is guarding."
+        print "eg. for this file:",
+        print rawName.upper() + "_HPP_INC"
+        continue
+    print "\033[92mInclude guards okay\033[0m"
