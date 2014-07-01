@@ -25,7 +25,7 @@ def checkForGuards(filename, report):
         ndefList.append((lineNum, ndef))
         continue
 
-      #TODO: Determine best way to check for guards
+      #TODO: Determine best way to check for guard
 
 
 

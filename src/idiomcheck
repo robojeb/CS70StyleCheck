@@ -3,11 +3,8 @@ import re, sys, os
 import clang.cindex
 import Queue
 
-#This is the message tag for an idiomatic errors
-IDIOM = "\033[93m[IDIOM]\033[0m"
-
-#This is the message tag for unsafe errors
-UNSAFE = "\033[91m[UNSAFE]\033[0m"
+from report import Report
+from helpers import LIB_CLANG_PATH, getExtension
 
 #This will match (and not capture) any local or member variable in camel case
 VAR = ur'([a-z][a-z0-9]*(?:[A-Z][a-z0-9]*)*_?)'
@@ -31,11 +28,13 @@ using = re.compile(usingRegex)
 #them later
 outQueue = Queue.PriorityQueue()
 
-def getExtension(fileName):
-  basename = os.path.basename(fileName)
-  return os.path.splitext(basename)[1]
+def checkCStyleCast(fileName, report):
+  clang.cindex.Config.set_library_file(LIB_CLANG_PATH)
+  index = clang.cindex.Index.create()
+  tu = index.parse(fileName)
+  cCastCheckHelper(tu.cursor, report)
 
-def cCastCheck(node):
+def cCastCheckHelper(node, report):
   '''Using libclang to check for C-Style casts'''
   if node.kind == clang.cindex.CursorKind.CSTYLE_CAST_EXPR:
     errString = IDIOM + " line: " + str(node.location.line) + " col: " + str(node.location.column) + "\n"
