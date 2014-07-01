@@ -1,16 +1,33 @@
 #!/usr/bin/python
 import sys, re, os.path
+from report import Report
 
 #This regex finds the #ifndef VAR part of the file
-incGuardRegex = ur"#ifndef ([A-Z_]+)\n+#define ([A-Z_]+)( [0-9]+)*\n"
-incGuard = re.compile(incGuardRegex)
+ifndefRegex = re.compile(ur'#ifndef *([A-Z_]+)')
+
+#This regex finds all of the #define sections of the file
+defineRegex = re.compile(ur'#define *([A-Z_]+)')
 
 #This regex finds the #endif
-endifRegex = ur"#endif"
-endif = re.compile(endifRegex)
+endif = re.compile(ur'#endif')
 
-ERROR = "\033[91m[Error]\033[0m"
-WARNING = "\033[93m[Style Warning]\033[0m"
+
+def checkForGuards(filename, report):
+  #Open the file and we will check that
+  with open(filename, 'r') as file:
+    content = file.read()
+    ndefList = []
+    #We go through each line trying to find matching ifndef pairs and recording
+    #all defined values to see if one matches the include guard
+    for lineNum, line in enumerate(file):
+      ndef = ifndefRegex.search(line)
+      if not ndef == None:
+        ndefList.append((lineNum, ndef))
+        continue
+
+      #TODO: Determine best way to check for guards
+
+
 
 if __name__ == "__main__":
   #Perform guard check on all files from the command line
