@@ -25,7 +25,8 @@ class CheckFile(object):
     #These datamembers are for tracking the errors and other problems
     #
 
-    self.messages = []
+    self.lineIssue = []
+    self.fileIssue = []
 
   def getLines(self):
     '''Returns an array containing each line as a string. It will lazily load
@@ -71,5 +72,8 @@ class CheckFile(object):
       pass
     return self.clangAST
 
-  def addMessage(self, line, col, message, type=MessageType.ERROR)
-    self.messages.append(line, col, type, message)
+  def addLineIssue(self, line, col, severity, title, message):
+    self.lineIssues.append((line, col, severity, title, message))
+
+  def addFileIssue(self, severity, title, message):
+    self.fileIssues.append((severity, title, message))

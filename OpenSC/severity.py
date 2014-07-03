@@ -4,6 +4,8 @@
 from enum import Enum, unique
 
 @unique
-class MessageType(Enum):
+class Severity(Enum):
   ERROR = 0
   WARNING = 1
+  SUGGESTION = 2
+  HINT = 3
