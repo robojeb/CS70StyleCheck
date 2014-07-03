@@ -1,4 +1,4 @@
-CS70StyleCheck
+OpenStyleCheck
 ==============
 
-A repository containing the style-checking programs for the HMC CS70 course.
+A library for building extensible style checking scripts in various languages.
