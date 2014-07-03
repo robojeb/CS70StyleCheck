@@ -5,11 +5,12 @@ for files that are being checked by the various check functions.
 import re, os
 
 class CheckFile(object):
+  LIB_CLANG_PATH='/usr/lib/llvm-3.3/lib/libclang.so'
+
   def __init__(self, fileName):
     #
     #These are datamembers for maintaining the encapsulation of the file
     #
-
     #The name of the file we have loaded
     self.fileName = fileName
     #An array with each line of the file as an element
@@ -24,9 +25,12 @@ class CheckFile(object):
     #
     #These datamembers are for tracking the errors and other problems
     #
-
     self.lineIssue = []
     self.fileIssue = []
+
+  #
+  # Getters for things about the file itself
+  #
 
   def getLines(self):
     '''Returns an array containing each line as a string. It will lazily load
@@ -45,6 +49,51 @@ class CheckFile(object):
         self.fileContents = file.read()
     return self.fileContents
 
+  def getlibclangAST(self):
+    '''Returns the libclang AST. Lazily generates the tree as needed'''
+    if self.AST is None:
+      index = clang.cindex.Index.create()
+      self.AST = index.parse(self.fileName)
+      pass
+    return self.AST
+
+  def getName(self):
+    '''Returns the basename of the file with extension'''
+    return os.path.basename(self.fileName)
+
+  def getRawName(self):
+    '''Returns the basename of the file without its extension'''
+    return os.path.splitext(self.getName())[0]
+
+  def getExtension(self):
+    '''Returns the file extension. This trims the '.' from the extension'''
+    return os.path.splitext(self.getName())[1][1:]
+
+  #
+  # Functions for manipulating issues with the file
+  #
+
+  def addLineIssue(self, line, col, severity, title, message):
+    '''Adds an issue at a specific line in the file'''
+    self.lineIssues.append((line, col, severity, title, message))
+
+  def addFileIssue(self, severity, title, message):
+    '''Adds a general issue. This is for issues which don't generally have line
+       numbers. (Like missing include guards)'''
+    self.fileIssues.append((severity, title, message))
+
+  def getLineIssues(self):
+    '''Sorts the line issues by line number and column and returns the list'''
+    self.lineIssues.sort()
+    return self.lineIssues
+
+  def getFileIssues(self):
+    '''Returns the list of file issues in the order they were added'''
+    return self.fileIssues
+
+  #
+  # Helper functions for performing actions on the file
+  #
 
   def performLineRegex(self, regex):
     '''Performs a regex operation on each line of file and returns a tuple
@@ -64,16 +113,3 @@ class CheckFile(object):
 
     #return all the matches we found
     return matches
-
-  def getlibclangAST(self):
-    '''Returns the libclang AST. Lazily generates the tree as needed'''
-    if self.AST is None:
-      #TODO: Parse the tree
-      pass
-    return self.clangAST
-
-  def addLineIssue(self, line, col, severity, title, message):
-    self.lineIssues.append((line, col, severity, title, message))
-
-  def addFileIssue(self, severity, title, message):
-    self.fileIssues.append((severity, title, message))
