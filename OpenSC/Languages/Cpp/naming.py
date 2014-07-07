@@ -8,7 +8,8 @@ from Severity import Severity
 
 def checkLocalVariables(checkFile, regex, \
     title="Invalid local variable name", \
-    message="Consult your style guidelines for correct local variable names"):
+    message="Consult your style guidelines for correct local variable names",\
+    severity=Severity.ERROR):
   '''This function takes a regular expression which defines a correct local
      variable name and adds an issue for each instance of a local variable that
      does not conform to this regular expression'''
@@ -32,7 +33,7 @@ def checkLocalVariables(checkFile, regex, \
       return
     if node.kind == clang.cindex.CursorKind.VAR_DECL:
       if localVariableRegex.match(node.spelling) is None:
-        checkFile.addLineIssue(Severity.ERROR, \
+        checkFile.addLineIssue(severity, \
           node.location.line, node.location.column, \
           title, message)
 
@@ -40,7 +41,8 @@ def checkLocalVariables(checkFile, regex, \
 
 def checkMemberVariables(checkFile, regex, \
     title="Invalid member variable name", \
-    message="Cunsult your style guidelines for correct member variable names"):
+    message="Cunsult your style guidelines for correct member variable names",\
+    severity=Severity.ERROR):
   '''This function takes a regular expression which defines a correct member
      variable name and adds an issue for each instance of a member variable that
      does not conform to this regular expression'''
@@ -63,7 +65,7 @@ def checkMemberVariables(checkFile, regex, \
       return
     if node.kind == clang.cindex.CursorKind.FIELD_DECL:
       if memberVariableRegex.match(node.spelling) is None:
-        checkFile.addLineIssue(Severity.ERROR, \
+        checkFile.addLineIssue(severity, \
           node.location.line, node.location.column, \
           title, message)
 
@@ -74,7 +76,8 @@ def checkMemberVariables(checkFile, regex, \
 
 def checkStaticVariables(checkFile, regex, \
     title="Invalid static variable name", \
-    message="Cunsult your style guidelines for correct static variable names"):
+    message="Cunsult your style guidelines for correct static variable names",\
+    severity=Severity.ERROR):
   '''This function takes a regular expression which defines a correct static
      variable name and adds an issue for each instance of a static variable that
      does not conform to this regular expression. (This function does not
@@ -99,7 +102,7 @@ def checkStaticVariables(checkFile, regex, \
       return
     if node.kind == clang.cindex.CursorKind.VAR_DECL:
       if memberVariableRegex.match(node.spelling) is None:
-        checkFile.addLineIssue(Severity.ERROR, \
+        checkFile.addLineIssue(severity, \
           node.location.line, node.location.column, \
           title, message)
 
@@ -110,7 +113,8 @@ def checkStaticVariables(checkFile, regex, \
 
 def checkGlobalVariables(checkFile, regex, \
     title="Invalid global variable name", \
-    message="Cunsult your style guidelines for correct global variable names"):
+    message="Cunsult your style guidelines for correct global variable names",\
+    severity=Severity.ERROR):
   '''This function takes a regular expression which defines a correct global
      variable name and adds an issue for each instance of a global variable that
      does not conform to this regular expression. (By putting an empty regex and
@@ -124,7 +128,7 @@ def checkGlobalVariables(checkFile, regex, \
       return
     if node.kind == clang.cindex.CursorKind.VAR_DECL:
       if globalVariableRegex.match(node.spelling) is None:
-        checkFile.addLineIssue(Severity.ERROR, \
+        checkFile.addLineIssue(severity, \
         node.location.line, node.location.column, \
         title, message)
     elif node.kind == clang.cindex.CursorKind.CLASS_DECL or\
@@ -136,7 +140,8 @@ def checkGlobalVariables(checkFile, regex, \
 
 def checkClassNames(checkFile, regex, \
     title="Invalid class name", \
-    message="Cunsult your style guidelines for correct class names"):
+    message="Cunsult your style guidelines for correct class names",\
+    severity=Severity.ERROR):
   '''This function takes a regular expression which defines a correct class
      name and adds an issue for each instance of a class that
      does not conform to this regular expression.'''
@@ -150,7 +155,7 @@ def checkClassNames(checkFile, regex, \
 
     if node.kind == clang.cindex.CursorKind.CLASS_DECL:
       if classNameRegex.match(node.spelling) is None:
-        checkFile.addLineIssue(Severity.ERROR, \
+        checkFile.addLineIssue(severity, \
         node.location.line, node.location.column, \
         title, message)
 
@@ -161,7 +166,8 @@ def checkClassNames(checkFile, regex, \
 
 def checkFunctionNames(checkFile, regex, \
     title="Invalid function name", \
-    message="Cunsult your style guidelines for correct function names"):
+    message="Cunsult your style guidelines for correct function names",\
+    severity=Severity.ERROR):
   '''This function takes a regular expression which defines a correct function
      name and adds an issue for each instance of a function that
      does not conform to this regular expression.'''
@@ -176,7 +182,7 @@ def checkFunctionNames(checkFile, regex, \
     if node.kind == clang.cindex.CursorKind.FUNCTION_DECL or \
         node.kind == clang.cindex.CursorKind.CXX_METHOD:
       if functionNameRegex.match(node.spelling) is None:
-        checkFile.addLineIssue(Severity.ERROR, \
+        checkFile.addLineIssue(severity, \
         node.location.line, node.location.column, \
         title, message)
 

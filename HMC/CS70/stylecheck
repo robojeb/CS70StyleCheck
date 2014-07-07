@@ -1,0 +1,58 @@
+#!/usr/bin/python
+
+import sys
+
+from OpenSC.checkfile import CheckFile
+from OpenSC.Languages.Cpp import naming, headers
+from OpenSC.severity import Severity
+
+LOCAL_VAR_REGEX     = ur"([a-z][a-z0-9]*)([A-Z][a-z0-9]*)*$"
+MEMBER_VAR_REGEX    = ur"([a-z][a-z0-9]*)([A-Z][a-z0-9]*)*_$"
+STATIC_VAR_REGEX    = ur"([A-Z][A-Z0-9]*)(_[A-Z0-9]+)*$"
+CLASS_NAME_REGEX    = ur"([A-Z][a-z]*)+$"
+FUNCITON_NAME_REGEX = ur"([a-z][a-z]*)([A-Z][a-z]*)*$"
+
+if __name__ == '__main__':
+  #Iterate over all files provided on the command line
+  for fn in sys.argv[1:]:
+    #open the file
+    cf = CheckFile(fn)
+
+    #Check for names of various things
+    naming.checkLocalVariables(cf, LOCAL_VAR_REGEX, \
+      message=\
+"Correct CS70 style local variables are in lower camel case. (eg. fooBar)")
+
+    naming.checkMemberVariables(cf, MEMBER_VAR_REGEX, \
+      message=\
+"Correct CS70 style member variables are in lower camel case with a trailing \n\
+underscore (eg. fooBar_)")
+
+    naming.checkStaticVariables(cf, STATIC_VAR_REGEX, \
+      message=\
+"Correct CS70 style static constants variables should be in all caps with \n\
+underscores between words. (eg. FOO_BAR)")
+
+    naming.checkClassNames(cf, CLASS_NAME_REGEX, \
+      message=\
+"Correct CS70 style class names are in upper camel case. (eg. FooBar)")
+
+    naming.checkFunctionNames(cf, FUNCTION_NAME_REGEX, \
+      message=\
+"Correct CS70 style function names are in lower camel case. (eg. fooBar)")
+
+    #We now make sure there are no global variables
+    naming.checkGlobalVariables(cf, "", type="Global Variable", \
+      message=\
+"CS70 style forbids the use of global variables.")
+
+    if cf.getExtension() == "hpp":
+      headers.checkUsing(cf, \
+        message=\
+"Using directives are not allowed in header files."\
+        severity=Severity.ERROR)
+
+      #Check all the include guard stuff here
+      headers.checkIncludeGuardExistance(cf)
+      headers.checkIncludeGuardValidity(cf)
+      headers.checkIncludeGuardNaming(cf)
