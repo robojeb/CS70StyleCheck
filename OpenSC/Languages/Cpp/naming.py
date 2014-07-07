@@ -8,7 +8,7 @@ from Severity import Severity
 
 def checkLocalVariables(checkFile, regex, \
     title="Invalid local variable name", \
-    message="Consult your style guidelines for correct local variable names",\
+    message="Consult your style guidelines for correct local variable names.",\
     severity=Severity.ERROR):
   '''This function takes a regular expression which defines a correct local
      variable name and adds an issue for each instance of a local variable that
@@ -41,7 +41,7 @@ def checkLocalVariables(checkFile, regex, \
 
 def checkMemberVariables(checkFile, regex, \
     title="Invalid member variable name", \
-    message="Cunsult your style guidelines for correct member variable names",\
+    message="Cunsult your style guidelines for correct member variable names.",\
     severity=Severity.ERROR):
   '''This function takes a regular expression which defines a correct member
      variable name and adds an issue for each instance of a member variable that
@@ -76,7 +76,7 @@ def checkMemberVariables(checkFile, regex, \
 
 def checkStaticVariables(checkFile, regex, \
     title="Invalid static variable name", \
-    message="Cunsult your style guidelines for correct static variable names",\
+    message="Cunsult your style guidelines for correct static variable names.",\
     severity=Severity.ERROR):
   '''This function takes a regular expression which defines a correct static
      variable name and adds an issue for each instance of a static variable that
@@ -113,7 +113,7 @@ def checkStaticVariables(checkFile, regex, \
 
 def checkGlobalVariables(checkFile, regex, \
     title="Invalid global variable name", \
-    message="Cunsult your style guidelines for correct global variable names",\
+    message="Cunsult your style guidelines for correct global variable names.",\
     severity=Severity.ERROR):
   '''This function takes a regular expression which defines a correct global
      variable name and adds an issue for each instance of a global variable that
@@ -140,7 +140,7 @@ def checkGlobalVariables(checkFile, regex, \
 
 def checkClassNames(checkFile, regex, \
     title="Invalid class name", \
-    message="Cunsult your style guidelines for correct class names",\
+    message="Cunsult your style guidelines for correct class names.",\
     severity=Severity.ERROR):
   '''This function takes a regular expression which defines a correct class
      name and adds an issue for each instance of a class that
@@ -166,7 +166,7 @@ def checkClassNames(checkFile, regex, \
 
 def checkFunctionNames(checkFile, regex, \
     title="Invalid function name", \
-    message="Cunsult your style guidelines for correct function names",\
+    message="Cunsult your style guidelines for correct function names.",\
     severity=Severity.ERROR):
   '''This function takes a regular expression which defines a correct function
      name and adds an issue for each instance of a function that

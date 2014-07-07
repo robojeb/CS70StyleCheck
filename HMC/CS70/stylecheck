@@ -3,14 +3,14 @@
 import sys
 
 from OpenSC.checkfile import CheckFile
-from OpenSC.Languages.Cpp import naming, headers
+from OpenSC.Languages.Cpp import naming, headers, idioms
 from OpenSC.severity import Severity
 
 LOCAL_VAR_REGEX     = ur"([a-z][a-z0-9]*)([A-Z][a-z0-9]*)*$"
 MEMBER_VAR_REGEX    = ur"([a-z][a-z0-9]*)([A-Z][a-z0-9]*)*_$"
 STATIC_VAR_REGEX    = ur"([A-Z][A-Z0-9]*)(_[A-Z0-9]+)*$"
 CLASS_NAME_REGEX    = ur"([A-Z][a-z]*)+$"
-FUNCITON_NAME_REGEX = ur"([a-z][a-z]*)([A-Z][a-z]*)*$"
+FUNCTION_NAME_REGEX = ur"([a-z][a-z]*)([A-Z][a-z]*)*$"
 
 if __name__ == '__main__':
   #Iterate over all files provided on the command line
@@ -45,6 +45,10 @@ underscores between words. (eg. FOO_BAR)")
     naming.checkGlobalVariables(cf, "", type="Global Variable", \
       message=\
 "CS70 style forbids the use of global variables.")
+
+    idioms.checkCStyleCast(cf)
+    idioms.checkDereferenceUsage(cf)
+    idioms.checkThisUsage(cf)
 
     if cf.getExtension() == "hpp":
       headers.checkUsing(cf, \

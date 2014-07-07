@@ -10,7 +10,7 @@ INCLUDE_GUARD_REGEX = re.compile(ur"#ifndef *([A-Z_]+).*\n#define *([A-Z_]+)")
 
 def checkUsing(checkFile, \
     title="Using directive detected", \
-    message="Using directives are not reccommended in header files",
+    message="Using directives are not reccommended in header files.",
     severity=Severity.WARNING):
   '''This function checks for using directives. It assumes that it is being run
      on a header file and adds an issue for each using directive.'''
@@ -23,7 +23,7 @@ def checkUsing(checkFile, \
 
 def checkIncludeGuardExistance(checkFile, \
     title="No include guards detected", \
-    message="Header files should contain include guards",
+    message="Header files should contain include guards.",
     severity=Severity.ERROR):
   '''This function checks that there is an include guard in a header file'''
   #TODO: Make this function actually check for correctly matched #endifs
@@ -37,7 +37,7 @@ def checkIncludeGuardExistance(checkFile, \
 
 def checkIncludeGuardValidity(checkFile, \
     title="Misformed include guard", \
-    message="Include guards variable names have to match",
+    message="Include guards variable names have to match.",
     severity=Severity.ERROR):
   '''This function checks that there is an include guard in a header file'''
 
@@ -52,7 +52,7 @@ def checkIncludeGuardValidity(checkFile, \
 
 def checkIncludeGuardNaming(checkFile, \
     title="Invalid include guard naming", \
-    message="Include guards should contain the name of the file they are in",
+    message="Include guards should contain the name of the file they are in.",
     severity=Severity.WARNING):
   '''This function checks that the include guards contain the name of the file
      that they are in. If the include guards don't exist this does nothing'''
