@@ -4,6 +4,7 @@ import sys
 
 from OpenSC.checkfile import CheckFile
 from OpenSC.Languages.Cpp import naming, headers, idioms
+from OpenSC.Languages.Generic import formatting
 from OpenSC.severity import Severity
 
 LOCAL_VAR_REGEX     = ur"([a-z][a-z0-9]*)([A-Z][a-z0-9]*)*$"
@@ -17,6 +18,9 @@ if __name__ == '__main__':
   for fn in sys.argv[1:]:
     #open the file
     cf = CheckFile(fn)
+
+    formatting.checkLineLength()
+    formatting.checkTabs()
 
     #Check for names of various things
     naming.checkLocalVariables(cf, LOCAL_VAR_REGEX, \
