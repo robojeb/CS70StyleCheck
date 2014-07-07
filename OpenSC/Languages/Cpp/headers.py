@@ -68,3 +68,12 @@ def checkIncludeGuardNaming(checkFile, \
     nameMatch = nameRegex.search(match.group(1))
     if nameMatch == None:
       checkFile.addFileIssue(severity, title, message)
+
+
+def checkNoIncludeGuards(checkFile, \
+    title="Include Guards not needed",\
+    message="This type of file should not contain includeguards.",\
+    severity=Severity.WARNING):
+
+  if not INCLUDE_GUARD_REGEX.search(checkFile.getContents()) is None:
+    checkFile.addFileIssue(severity, title, message)
