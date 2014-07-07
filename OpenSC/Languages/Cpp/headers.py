@@ -6,6 +6,8 @@ This module adds support for checks about style issues within header files
 import re
 from Severity import Severity
 
+INCLUDE_GUARD_REGEX = re.compile(ur"#ifndef *([A-Z_]+).*\n#define *([A-Z_]+)")
+
 def checkUsing(checkFile, \
     title="Using directive detected", \
     message="Using directives are not reccommended in header files",
@@ -26,11 +28,8 @@ def checkIncludeGuardExistance(checkFile, \
   '''This function checks that there is an include guard in a header file'''
   #TODO: Make this function actually check for correctly matched #endifs
 
-  #Include guard regex
-  incGuardRegex = re.compile(ur"#ifndef *([A-Z_]+).*\n#define *([A-Z_]+)")
-
   #Find the first match for this regex
-  match = incGuardRegex.search(checkFile.getContents())
+  match = INCLUDE_GUARD_REGEX.search(checkFile.getContents())
 
   #If there is no match we must not have an include guard
   if match is None:
@@ -42,11 +41,9 @@ def checkIncludeGuardValidity(checkFile, \
     severity=Severity.ERROR):
   '''This function checks that there is an include guard in a header file'''
 
-  #Include guard regex
-  incGuardRegex = re.compile(ur"#ifndef *([A-Z_]+).*\n#define *([A-Z_]+)")
 
   #Find the first match for this regex
-  match = incGuardRegex.search(checkFile.getContents())
+  match = INCLUDE_GUARD_REGEX.search(checkFile.getContents())
 
   #If there is no match we must not have an include guard
   if not match is None:
@@ -60,11 +57,9 @@ def checkIncludeGuardNaming(checkFile, \
   '''This function checks that the include guards contain the name of the file
      that they are in. If the include guards don't exist this does nothing'''
 
-  #Include guard regex
-  incGuardRegex = re.compile(ur"#ifndef *([A-Z_]+).*\n#define *([A-Z_]+)")
 
   #Find the first match for this regex
-  match = incGuardRegex.search(checkFile.getContents())
+  match = INCLUDE_GUARD_REGEX.search(checkFile.getContents())
 
   #If there is no match we must not have an include guard
   if not match is None:
