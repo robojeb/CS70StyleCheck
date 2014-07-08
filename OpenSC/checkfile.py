@@ -3,6 +3,7 @@ This module provides the CheckFile object. This object is the encapsulation
 for files that are being checked by the various check functions.
 '''
 import re, os
+import clang.cindex
 
 class CheckFile(object):
   LIB_CLANG_PATH='/usr/lib/llvm-3.3/lib/libclang.so'

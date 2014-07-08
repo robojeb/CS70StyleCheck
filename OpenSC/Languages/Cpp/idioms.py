@@ -3,7 +3,7 @@ This module supports checking for some C++ coding idioms and unsafe practices.
 '''
 
 import re
-from severity import Severity
+from Severity import Severity
 
 #This regex matches all strings which are (*VARIABLE).VARIABLE
 DEREF_REGEX = ur"\( *\* *(.*?) *\)\..*"
