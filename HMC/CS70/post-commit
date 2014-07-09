@@ -1,0 +1,98 @@
+#!/usr/bin/python
+'''
+This script is a post-commit hook for SVN. It extracts which assignments and
+users have commited based on the commit log and will use SSH to call a script
+on a remote machine which can run style check code and unit tests.
+
+This script will return results from all of the remote scripts that get run. it
+is recommended that only simple information, such as compilation results. Other
+results can be sent by the remote script via email.
+'''
+
+import re, sys, os, subprocess
+
+#This regular expression is designed to extract the location of the commited
+#files so that we may run correct scripts
+PATH_REGEX = ur'([a-zA-z]+[0-9]+)/ours/([a-zA-Z]+-[a-zA-Z]+|[a-zA-Z]+)/(hw[0-9]+)'
+
+REMOTE_USER = "cs70test"
+REMOTE_MACHINE = "knuth.cs.hmc.edu"
+
+#This can be changed to accomodate different setups without changing the rest
+#of the script
+def makeScriptPath(pathMatch):
+  '''This function takes a match from the PATH_REGEX and turns it into a path to
+     the script on the remote machine.'''
+  semester = pathMatch.group(1)
+  student = pathMatch.group(2)
+  homework = pathMatch.group(3)
+
+  #This should create a path that looks like
+  #~/{semester}/ours/{student}/{homework}
+  #which should be the location of the script
+  path = os.path.join("~", semester)
+  path = os.path.join(path, "ours")
+  path = os.path.join(path, student)
+  path = os.path.join(path, homework)
+
+  return path
+
+def clearHookError():
+  '''To provide output we leverage the fact that the SVN hook system prints to
+     the user if the return code is not 0. Unfortunately this also prints that
+     the script failed. To combat this we erase that error message so as not to
+     alarm students.'''
+  print >> sys.stderr, "\033[F"
+  print >> sys.stderr, " "*80
+
+def runProcess(arguments):
+  '''A helper function for running a command and getting its results back'''
+  proc = subprocess.Popen(arguments, env=os.environ, \
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  proc.wait()
+  return proc.stdout.read(), proc.stderr.read()
+
+if __name__ == '__main__':
+  #This gets called by svn as ./post-commit {path to repo} {revision}
+  path = sys.argv[1]
+  rev = sys.argv[2]
+
+  #Get the list of changed files
+  changeLog, changeLogErr = runProcess(['svnlook', 'changed', path, '-r', rev])
+  #FIXME: No error checking here do we need it?
+
+  #Create an empty list of assignments
+  foundAssignments = []
+
+  #List of results from running scripts
+  scriptResults = []
+  scriptErrors = []
+
+  #Check all committed files to find all the assignments that have had changes
+  for match in re.finditer(PATH_REGEX, changeLog):
+    if match.group(3) not in foundAssignments:
+      foundAssignments.append(match.group(3))
+      scriptPath = makeScriptPath(match)
+      #We give the remote script the revision we are on and the students we
+      #we need to test.
+      scriptOutput, scriptError = runProcess([scriptPath, rev, match.group(2)])
+      scriptResults.append(scriptOutput)
+
+  #We now return the output from the script(s)
+  clearHookError()
+
+  for i, result in enumerate(scriptResults):
+    #Only produce output if the script produced output
+    if len(result) != 0 and len(scriptErrors[i]) != 0:
+      print >> sys.stderr, "="*80
+      print >> sys.stderr, "Results for: " + foundAssignments[i]
+      print >> sys.stderr, "="*80
+      print >> sys.stderr, 'STDOUT:'
+      print >> sys.stderr, result
+      print >> sys.stderr, "-"*80
+      print >> sys.stderr, 'STDERR:'
+
+  #Give non-zero exit code so we can produce output on the terminal. Yes, this
+  #is a bit of a hack but it provides immediate feedback to the students which
+  #is what we are looking for.
+  sys.exit(1)
