@@ -4,7 +4,7 @@ names.
 '''
 
 import re
-from Severity import Severity
+from severity import Severity
 
 def checkLocalVariables(checkFile, regex, \
     title="Invalid local variable name", \

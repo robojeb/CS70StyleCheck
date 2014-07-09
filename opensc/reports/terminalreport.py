@@ -3,7 +3,7 @@ This module provides support for generating issue reports for terminal based
 output.
 '''
 
-from AbstractReport import AbstractReport
+from abstractreport import AbstractReport
 from severity import Severity
 
 class TerminalReport(AbstractReport):

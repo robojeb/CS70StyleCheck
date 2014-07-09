@@ -7,10 +7,10 @@ homework submissions for compliance with the CS70 style guide
 
 import sys
 
-from OpenSC.CheckFile import CheckFile
-from OpenSC.Languages.Cpp import Naming, Headers, Idioms
-from OpenSC.Languages.Generic import Formatting
-from OpenSC.Severity import Severity
+from opensc.checkfile import CheckFile
+from opensc.languages.cpp import naming, headers, idioms
+from opensc.languages.generic import formatting
+from opensc.severity import Severity
 
 LOCAL_VAR_REGEX     = ur"([a-z][a-z0-9]*)([A-Z][a-z0-9]*)*$"
 MEMBER_VAR_REGEX    = ur"([a-z][a-z0-9]*)([A-Z][a-z0-9]*)*_$"
@@ -24,48 +24,48 @@ if __name__ == '__main__':
     #open the file
     cf = CheckFile(fn)
 
-    Formatting.checkLineLength()
-    Formatting.checkTabs()
+    formatting.checkLineLength()
+    formatting.checkTabs()
 
     #Check for names of various things
-    Naming.checkLocalVariables(cf, LOCAL_VAR_REGEX, \
+    naming.checkLocalVariables(cf, LOCAL_VAR_REGEX, \
       message=\
 "Correct CS70 style local variables are in lower camel case. (eg. fooBar)")
 
-    Naming.checkMemberVariables(cf, MEMBER_VAR_REGEX, \
+    naming.checkMemberVariables(cf, MEMBER_VAR_REGEX, \
       message=\
 "Correct CS70 style member variables are in lower camel case with a trailing \n\
 underscore (eg. fooBar_)")
 
-    Naming.checkStaticVariables(cf, STATIC_VAR_REGEX, \
+    naming.checkStaticVariables(cf, STATIC_VAR_REGEX, \
       message=\
 "Correct CS70 style static constants variables should be in all caps with \n\
 underscores between words. (eg. FOO_BAR)")
 
-    Naming.checkClassNames(cf, CLASS_NAME_REGEX, \
+    naming.checkClassNames(cf, CLASS_NAME_REGEX, \
       message=\
 "Correct CS70 style class names are in upper camel case. (eg. FooBar)")
 
-    Naming.checkFunctionNames(cf, FUNCTION_NAME_REGEX, \
+    naming.checkFunctionNames(cf, FUNCTION_NAME_REGEX, \
       message=\
 "Correct CS70 style function names are in lower camel case. (eg. fooBar)")
 
     #We now make sure there are no global variables
-    Naming.checkGlobalVariables(cf, "", type="Global Variable", \
+    naming.checkGlobalVariables(cf, "", type="Global Variable", \
       message=\
 "CS70 style forbids the use of global variables.")
 
-    Idioms.checkCStyleCast(cf)
-    Idioms.checkDereferenceUsage(cf)
-    Idioms.checkThisUsage(cf)
+    idioms.checkCStyleCast(cf)
+    idioms.checkDereferenceUsage(cf)
+    idioms.checkThisUsage(cf)
 
     if cf.getExtension() == "hpp":
-      Headers.checkUsing(cf, \
+      headers.checkUsing(cf, \
         message=\
 "Using directives are not allowed in header files."\
         severity=Severity.ERROR)
 
       #Check all the include guard stuff here
-      Headers.checkIncludeGuardExistance(cf)
-      Headers.checkIncludeGuardValidity(cf)
-      Headers.checkIncludeGuardNaming(cf)
+      headers.checkIncludeGuardExistance(cf)
+      headers.checkIncludeGuardValidity(cf)
+      headers.checkIncludeGuardNaming(cf)

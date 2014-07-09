@@ -4,7 +4,7 @@ This module adds support for checks about style issues within header files
 
 
 import re
-from Severity import Severity
+from severity import Severity
 
 INCLUDE_GUARD_REGEX = re.compile(ur"#ifndef *([A-Z_]+).*\n#define *([A-Z_]+)")
 

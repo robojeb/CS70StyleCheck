@@ -4,7 +4,7 @@ files.
 '''
 
 import re
-from Severity import Severity
+from severity import Severity
 
 def checkLineLength(checkFile, length=80, expandTabs=True, tabSize=4,\
     title="Line length exceeded",\
