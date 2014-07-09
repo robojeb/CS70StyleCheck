@@ -10,9 +10,9 @@ Supported Languages
 
 Installation
 ---
- 1. Place OpenSC next to the script that is using it/place in site-packages
- folder for your version of python.
- 2. Install clang
+ 1. Pull OpenStyleCheck from the github and add the OpenSC directory location to
+your PYTHONPATH environment variable
+ 2. Install clang, and the libclang libraries
  3. Install python bindings for the version of clang you installed. The command
  to do this is `sudo pip install clang==#.#`
  4. Inside your script set the variable `CheckFile.LIB_CLANG_PATH` to the
