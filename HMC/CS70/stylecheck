@@ -13,7 +13,7 @@ from opensc.languages.generic import formatting
 from opensc.severity import Severity
 
 LOCAL_VAR_REGEX     = ur"([a-z][a-z0-9]*)([A-Z][a-z0-9]*)*$"
-MEMBER_VAR_REGEX    = ur"([a-z][a-z0-9]*)([A-Z][a-z0-9]*)*_$"
+MEMBER_VAR_REGEX    = ur"([a-z][a-z0-9]*)([A-Z][a-z0-9]*)*\_$"
 STATIC_VAR_REGEX    = ur"([A-Z][A-Z0-9]*)(_[A-Z0-9]+)*$"
 CLASS_NAME_REGEX    = ur"([A-Z][a-z]*)+$"
 FUNCTION_NAME_REGEX = ur"([a-z][a-z]*)([A-Z][a-z]*)*$"
