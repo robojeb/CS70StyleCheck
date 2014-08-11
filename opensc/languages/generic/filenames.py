@@ -4,7 +4,7 @@ used as a check during an automatic commit hook check.
 '''
 
 import re
-from severity import Severity
+from opensc.severity import Severity
 
 def checkExtension(checkFile, allowedExtensions,
     title="File has unallowed extension",

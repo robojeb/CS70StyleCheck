@@ -4,8 +4,8 @@ It is not designed to create an entire HTML page but can be placed as the body
 to any HTML page
 '''
 
-from abstractreport import AbstractReport
-from severity import Severity
+from opensc.abstractreport import AbstractReport
+from opensc.severity import Severity
 
 class HTMLBodyReport(AbstractReport):
   SEVERITY_MAP_START = {

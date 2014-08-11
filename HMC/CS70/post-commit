@@ -13,7 +13,7 @@ import re, sys, os, subprocess
 
 #This regular expression is designed to extract the location of the commited
 #files so that we may run correct scripts
-PATH_REGEX = ur'([a-zA-z]+[0-9]+)/ours/([a-zA-Z]+-[a-zA-Z]+|[a-zA-Z]+)/(hw[0-9]+)'
+PATH_REGEX = ur'([a-zA-z]+[0-9]+)/ours/([a-zA-Z`]+-[a-zA-Z]+|[a-zA-Z]+)/(hw[0-9]+)'
 
 
 REMOTE_USER = "cs70test"

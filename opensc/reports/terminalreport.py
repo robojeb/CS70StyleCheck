@@ -3,8 +3,8 @@ This module provides support for generating issue reports for terminal based
 output.
 '''
 
-from abstractreport import AbstractReport
-from severity import Severity
+from opensc.abstractreport import AbstractReport
+from opensc.severity import Severity
 
 class TerminalReport(AbstractReport):
   SEVERITY_MAP = {
